@@ -210,6 +210,7 @@ def restart_coq(*args):
               , '-async-proofs'
               , 'on'
               ]
+    compcert_opt = "-R lib compcert.lib -R common compcert.common -R x86_32 compcert.x86_32 -R x86 compcert.x86 -R backend compcert.backend -R cfrontend compcert.cfrontend -R driver compcert.driver -R flocq compcert.flocq -R exportclight compcert.exportclight -R cparser compcert.cparser -R psfi compcert.psfi".split()
     try:
         if os.name == 'nt':
             coqtop = subprocess.Popen(
@@ -219,8 +220,12 @@ def restart_coq(*args):
               , stderr = subprocess.STDOUT
             )
         else:
+            opts =  options + list(args)
+            if os.path.isdir('./driver'):
+                opts = opts + list(compcert_opt)
+            print(opts)
             coqtop = subprocess.Popen(
-                options + list(args)
+                opts
               , stdin = subprocess.PIPE
               , stdout = subprocess.PIPE
               , preexec_fn = ignore_sigint
